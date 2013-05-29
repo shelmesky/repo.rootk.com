@@ -5,6 +5,7 @@ import os
 import sys
 import signal
 import socket
+import argparse
 
 from tornado import ioloop
 from tornado.web import RequestHandler, Application
@@ -107,5 +108,24 @@ def main(port):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="cloud loadbalance server")
+    exclusive_group = parser.add_mutually_exclusive_group(required=False)
+    exclusive_group.add_argument('-r', '--dryrun', action='store_true',
+                            dest='dryrun', default=False, help='just dry run')
+    exclusive_group.add_argument('-d', '--daemon', action='store_true',
+                            dest='daemon', default=False, help='make this process go background.')
+    
+    sysargs = sys.argv[1:]
+    args = parser.parse_args(args=sysargs)
+    if len(sysargs) < 1:
+        parser.print_help()
+        sys.exit(1)
+    else:
+        if args.dryrun:
+           pass
+        elif args.daemon:
+           print("we will disappear from console :)")
+           daemonize()
+           
     main(8001)
 
